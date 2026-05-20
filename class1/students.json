@@ -1,0 +1,28 @@
+[
+    {
+        "username": "arshad123",
+        "first_name": "Arshad",
+        "last_name": "Pasha",
+        "gender": "Male"
+    },
+
+    {
+        "username": "john456",
+        "first_name": "John",
+        "last_name": "David",
+        "gender": "Male"
+    },
+
+    {
+        "username": "sara789",
+        "first_name": "Sara",
+        "last_name": "Khan",
+        "gender": "Female"
+    },
+     {
+        "username": "ABCD123",
+        "first_name": "ABCD",
+        "last_name": "Khan",
+        "gender": "Female"
+    }
+]
