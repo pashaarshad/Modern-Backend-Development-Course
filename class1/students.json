@@ -24,5 +24,11 @@
         "first_name": "ABCD",
         "last_name": "Khan",
         "gender": "Female"
+    },
+    {
+        "username": "Anil123",
+        "first_name": "Anil",
+        "last_name": "Kumar",
+        "gender": "Male"
     }
 ]
