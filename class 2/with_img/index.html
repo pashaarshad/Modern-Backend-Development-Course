@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Firebase Registration Form</title>
+
+  <style>
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body{
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      background:linear-gradient(135deg,#6a11cb,#2575fc);
+      padding:20px;
+    }
+
+    .container{
+      width:100%;
+      max-width:450px;
+      background:white;
+      padding:35px;
+      border-radius:20px;
+      box-shadow:0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .title{
+      text-align:center;
+      margin-bottom:25px;
+    }
+
+    .title h2{
+      color:#333;
+      margin-bottom:5px;
+    }
+
+    .title p{
+      color:#777;
+      font-size:14px;
+    }
+
+    .input-box{
+      margin-bottom:18px;
+    }
+
+    .input-box label{
+      display:block;
+      margin-bottom:8px;
+      font-weight:bold;
+      color:#444;
+      font-size:14px;
+    }
+
+    .input-box input,
+    .input-box select{
+      width:100%;
+      padding:14px;
+      border:1px solid #ccc;
+      border-radius:12px;
+      outline:none;
+      font-size:15px;
+      transition:0.3s;
+    }
+
+    .input-box input:focus,
+    .input-box select:focus{
+      border-color:#6a11cb;
+      box-shadow:0 0 8px rgba(106,17,203,0.2);
+    }
+
+    .preview{
+      width:100%;
+      height:220px;
+      border-radius:15px;
+      object-fit:cover;
+      margin-top:10px;
+      display:none;
+      border:2px solid #ddd;
+    }
+
+    .btn{
+      width:100%;
+      padding:14px;
+      border:none;
+      border-radius:12px;
+      background:linear-gradient(135deg,#6a11cb,#2575fc);
+      color:white;
+      font-size:16px;
+      font-weight:bold;
+      cursor:pointer;
+      transition:0.3s;
+    }
+
+    .btn:hover{
+      transform:translateY(-2px);
+    }
+
+    .message{
+      text-align:center;
+      margin-top:15px;
+      font-weight:bold;
+      color:green;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <div class="title">
+      <h2>Registration Form</h2>
+      <p>Firebase Firestore + Storage</p>
+    </div>
+
+    <form id="regForm">
+
+      <div class="input-box">
+        <label>Full Name</label>
+        <input type="text" id="name" required>
+      </div>
+
+      <div class="input-box">
+        <label>Age</label>
+        <input type="number" id="age" required>
+      </div>
+
+      <div class="input-box">
+        <label>Gender</label>
+        <select id="gender" required>
+          <option value="">Select Gender</option>
+          <option>Male</option>
+          <option>Female</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <div class="input-box">
+        <label>Phone Number</label>
+        <input type="tel" id="phone" required>
+      </div>
+
+      <div class="input-box">
+        <label>Upload Image</label>
+        <input type="file" id="image" accept="image/*" required>
+        <img id="preview" class="preview">
+      </div>
+
+      <button type="submit" class="btn">Submit Registration</button>
+
+      <div class="message" id="message"></div>
+
+    </form>
+
+  </div>
+
+  <script type="module">
+
+    // Firebase Imports
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-analytics.js";
+
+    import {
+      getFirestore,
+      collection,
+      addDoc
+    } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+
+    import {
+      getStorage,
+      ref,
+      uploadBytes,
+      getDownloadURL
+    } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-storage.js";
+
+    // Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCSJk6ibfvnWgFRcigjSlNIa9q3nwDxTxo",
+      authDomain: "anil-test-b9925.firebaseapp.com",
+      projectId: "anil-test-b9925",
+      storageBucket: "anil-test-b9925.firebasestorage.app",
+      messagingSenderId: "911685361872",
+      appId: "1:911685361872:web:2efd4c97811359ef35fed5",
+      measurementId: "G-5K873EB1GC"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+
+    // Firestore
+    const db = getFirestore(app);
+
+    // Storage
+    const storage = getStorage(app);
+
+    // Preview Image
+    const imageInput = document.getElementById("image");
+    const preview = document.getElementById("preview");
+
+    imageInput.addEventListener("change", () => {
+
+      const file = imageInput.files[0];
+
+      if(file){
+        preview.src = URL.createObjectURL(file);
+        preview.style.display = "block";
+      }
+
+    });
+
+    // Form Submit
+    const form = document.getElementById("regForm");
+
+    form.addEventListener("submit", async (e) => {
+
+      e.preventDefault();
+
+      const name = document.getElementById("name").value;
+      const age = document.getElementById("age").value;
+      const gender = document.getElementById("gender").value;
+      const phone = document.getElementById("phone").value;
+
+      const imageFile = imageInput.files[0];
+
+      if(!imageFile){
+        alert("Please select image");
+        return;
+      }
+
+      try {
+
+        // Upload Image to Firebase Storage
+        const imageRef = ref(
+          storage,
+          "user_images/" + Date.now() + "_" + imageFile.name
+        );
+
+        await uploadBytes(imageRef, imageFile);
+
+        // Get Image URL
+        const imageURL = await getDownloadURL(imageRef);
+
+        // Save Data in Firestore
+        await addDoc(collection(db, "registrations"), {
+          name,
+          age,
+          gender,
+          phone,
+          imageURL,
+          createdAt: new Date()
+        });
+
+        document.getElementById("message").innerHTML =
+          "Registration Successful ✅";
+
+        form.reset();
+
+        preview.style.display = "none";
+
+      } catch(error){
+
+        console.error(error);
+
+        alert("Error : " + error.message);
+
+      }
+
+    });
+
+  </script>
+
+</body>
+</html>

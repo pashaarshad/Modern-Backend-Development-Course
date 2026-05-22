@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Registration Form</title>
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body{
+      height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      padding:20px;
+    }
+
+    .container{
+      width:100%;
+      max-width:420px;
+      background:white;
+      padding:35px;
+      border-radius:20px;
+      box-shadow:0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .title{
+      text-align:center;
+      margin-bottom:25px;
+    }
+
+    .title h2{
+      color:#333;
+      margin-bottom:5px;
+    }
+
+    .title p{
+      color:#777;
+      font-size:14px;
+    }
+
+    .input-box{
+      margin-bottom:18px;
+    }
+
+    .input-box label{
+      display:block;
+      margin-bottom:8px;
+      color:#444;
+      font-weight:bold;
+      font-size:14px;
+    }
+
+    .input-box input,
+    .input-box select{
+      width:100%;
+      padding:14px;
+      border:1px solid #ccc;
+      border-radius:12px;
+      outline:none;
+      font-size:15px;
+      transition:0.3s;
+    }
+
+    .input-box input:focus,
+    .input-box select:focus{
+      border-color:#6a11cb;
+      box-shadow:0 0 8px rgba(106,17,203,0.2);
+    }
+
+    .btn{
+      width:100%;
+      padding:14px;
+      border:none;
+      border-radius:12px;
+      background:linear-gradient(135deg,#6a11cb,#2575fc);
+      color:white;
+      font-size:16px;
+      font-weight:bold;
+      cursor:pointer;
+      transition:0.3s;
+    }
+
+    .btn:hover{
+      transform:translateY(-2px);
+      opacity:0.95;
+    }
+
+    .success{
+      text-align:center;
+      color:green;
+      margin-top:15px;
+      font-weight:bold;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <div class="title">
+      <h2>Registration Form</h2>
+      <p>Fill your details below</p>
+    </div>
+
+    <form id="regForm">
+
+      <div class="input-box">
+        <label>Full Name</label>
+        <input type="text" id="name" placeholder="Enter your name" required>
+      </div>
+
+      <div class="input-box">
+        <label>Age</label>
+        <input type="number" id="age" placeholder="Enter your age" required>
+      </div>
+
+      <div class="input-box">
+        <label>Gender</label>
+        <select id="gender" required>
+          <option value="">Select Gender</option>
+          <option>Male</option>
+          <option>Female</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <div class="input-box">
+        <label>Phone Number</label>
+        <input type="tel" id="phone" placeholder="Enter phone number" required>
+      </div>
+
+      <button type="submit" class="btn">Register</button>
+
+      <div class="success" id="successMsg"></div>
+
+    </form>
+  </div>
+
+  <!-- Firebase -->
+  <script type="module">
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-analytics.js";
+
+    import {
+      getFirestore,
+      collection,
+      addDoc
+    } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+
+    // Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCSJk6ibfvnWgFRcigjSlNIa9q3nwDxTxo",
+      authDomain: "anil-test-b9925.firebaseapp.com",
+      projectId: "anil-test-b9925",
+      storageBucket: "anil-test-b9925.firebasestorage.app",
+      messagingSenderId: "911685361872",
+      appId: "1:911685361872:web:a1ecc216dd57d49f35fed5",
+      measurementId: "G-F46DHBSYWE"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+
+    // Firestore
+    const db = getFirestore(app);
+
+    // Form Submit
+    const form = document.getElementById("regForm");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value;
+      const age = document.getElementById("age").value;
+      const gender = document.getElementById("gender").value;
+      const phone = document.getElementById("phone").value;
+
+      try {
+
+        await addDoc(collection(db, "registrations"), {
+          name,
+          age,
+          gender,
+          phone,
+          createdAt: new Date()
+        });
+
+        document.getElementById("successMsg").innerText =
+          "Registration Successful ✅";
+
+        form.reset();
+
+      } catch (error) {
+        alert("Error: " + error.message);
+      }
+    });
+
+  </script>
+
+</body>
+</html>
