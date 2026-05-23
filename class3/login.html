@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Firebase Login</title>
+</head>
+<body>
+
+  <h2>Login Page</h2>
+
+  <input type="email" id="email" placeholder="Enter Email"><br><br>
+
+  <input type="password" id="password" placeholder="Enter Password"><br><br>
+
+  <button id="signup">Sign Up</button>
+  <button id="login">Login</button>
+
+  <hr>
+
+  <button id="googleLogin">Login with Google</button>
+
+  <script type="module">
+
+    // FIREBASE IMPORTS
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-analytics.js";
+
+    import {
+      getAuth,
+      createUserWithEmailAndPassword,
+      signInWithEmailAndPassword,
+      GoogleAuthProvider,
+      signInWithPopup
+    } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+
+
+    // YOUR FIREBASE CONFIG
+    const firebaseConfig = {
+      apiKey: "AIzaSyAVt1-4OjuaWVKOxsTRfq-FUTc0e90QgYM",
+      authDomain: "class3-31b16.firebaseapp.com",
+      projectId: "class3-31b16",
+      storageBucket: "class3-31b16.firebasestorage.app",
+      messagingSenderId: "701922427075",
+      appId: "1:701922427075:web:0374f014669751520f6276",
+      measurementId: "G-F2T52Z1K48"
+    };
+
+
+    // INITIALIZE FIREBASE
+    const app = initializeApp(firebaseConfig);
+
+    const analytics = getAnalytics(app);
+
+    const auth = getAuth(app);
+
+
+    // SIGN UP
+    document.getElementById("signup").addEventListener("click", () => {
+
+      const email = document.getElementById("email").value;
+
+      const password = document.getElementById("password").value;
+
+      createUserWithEmailAndPassword(auth, email, password)
+
+        .then((userCredential) => {
+
+          alert("Account Created Successfully");
+
+          window.location.href = "welcome.html";
+
+        })
+
+        .catch((error) => {
+
+          alert(error.message);
+
+        });
+
+    });
+
+
+    // LOGIN
+    document.getElementById("login").addEventListener("click", () => {
+
+      const email = document.getElementById("email").value;
+
+      const password = document.getElementById("password").value;
+
+      signInWithEmailAndPassword(auth, email, password)
+
+        .then((userCredential) => {
+
+          alert("Login Successful");
+
+          window.location.href = "welcome.html";
+
+        })
+
+        .catch((error) => {
+
+          alert(error.message);
+
+        });
+
+    });
+
+
+    // GOOGLE LOGIN
+    document.getElementById("googleLogin").addEventListener("click", () => {
+
+      const provider = new GoogleAuthProvider();
+
+      signInWithPopup(auth, provider)
+
+        .then((result) => {
+
+          alert("Google Login Successful");
+
+          window.location.href = "welcome.html";
+
+        })
+
+        .catch((error) => {
+
+          alert(error.message);
+
+        });
+
+    });
+
+  </script>
+
+</body>
+</html>

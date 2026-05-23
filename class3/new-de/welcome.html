@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome</title>
+
+  <style>
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:Arial, Helvetica, sans-serif;
+    }
+
+    body{
+      height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      background:linear-gradient(135deg,#0f172a,#1e293b,#334155);
+    }
+
+    .card{
+      width:420px;
+      background:white;
+      border-radius:25px;
+      padding:40px;
+      text-align:center;
+      box-shadow:0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    .profile{
+      width:120px;
+      height:120px;
+      border-radius:50%;
+      object-fit:cover;
+      border:5px solid #2563eb;
+      margin-bottom:20px;
+    }
+
+    h1{
+      color:#111827;
+      margin-bottom:10px;
+    }
+
+    .info{
+      background:#f1f5f9;
+      padding:14px;
+      border-radius:12px;
+      margin-top:15px;
+      text-align:left;
+    }
+
+    .label{
+      font-size:13px;
+      color:#6b7280;
+      margin-bottom:5px;
+    }
+
+    .value{
+      font-size:16px;
+      color:#111827;
+      font-weight:bold;
+    }
+
+    .logout-btn{
+      width:100%;
+      padding:14px;
+      margin-top:25px;
+      border:none;
+      border-radius:12px;
+      background:#dc2626;
+      color:white;
+      font-size:16px;
+      font-weight:bold;
+      cursor:pointer;
+      transition:0.3s;
+    }
+
+    .logout-btn:hover{
+      background:#b91c1c;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <div class="card">
+
+    <img id="photo" class="profile" src="img.png">
+
+    <h1>Welcome User 👋</h1>
+
+    <div class="info">
+      <div class="label">Name</div>
+      <div class="value" id="name">Loading...</div>
+    </div>
+
+    <div class="info">
+      <div class="label">Email</div>
+      <div class="value" id="email">Loading...</div>
+    </div>
+
+    <button class="logout-btn" id="logout">
+      Logout
+    </button>
+
+  </div>
+
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+
+import {
+  getAuth,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAVt1-4OjuaWVKOxsTRfq-FUTc0e90QgYM",
+  authDomain: "class3-31b16.firebaseapp.com",
+  projectId: "class3-31b16",
+  storageBucket: "class3-31b16.firebasestorage.app",
+  messagingSenderId: "701922427075",
+  appId: "1:701922427075:web:0374f014669751520f6276",
+  measurementId: "G-F2T52Z1K48"
+};
+
+const app = initializeApp(firebaseConfig);
+
+const auth = getAuth(app);
+
+
+onAuthStateChanged(auth, (user) => {
+
+  if(user){
+
+    document.getElementById("name").innerHTML =
+      user.displayName || "No Name";
+
+    document.getElementById("email").innerHTML =
+      user.email;
+
+    if(user.photoURL){
+
+      document.getElementById("photo").src =
+        user.photoURL;
+
+    }
+
+  } else {
+
+    window.location.href = "index.html";
+
+  }
+
+});
+
+
+// LOGOUT
+document.getElementById("logout").addEventListener("click", () => {
+
+  signOut(auth)
+
+  .then(() => {
+
+    window.location.href = "index.html";
+
+  });
+
+});
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Welcome Page</title>
+</head>
+<body>
+
+  <h1>Welcome</h1>
+
+  <h2 id="name"></h2>
+
+  <h3 id="email"></h3>
+
+  <img id="photo" width="120">
+
+  <br><br>
+
+  <button id="logout">Logout</button>
+
+  <script type="module">
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-analytics.js";
+
+    import {
+      getAuth,
+      onAuthStateChanged,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+
+
+    // YOUR FIREBASE CONFIG
+    const firebaseConfig = {
+      apiKey: "AIzaSyAVt1-4OjuaWVKOxsTRfq-FUTc0e90QgYM",
+      authDomain: "class3-31b16.firebaseapp.com",
+      projectId: "class3-31b16",
+      storageBucket: "class3-31b16.firebasestorage.app",
+      messagingSenderId: "701922427075",
+      appId: "1:701922427075:web:0374f014669751520f6276",
+      measurementId: "G-F2T52Z1K48"
+    };
+
+
+    // INITIALIZE FIREBASE
+    const app = initializeApp(firebaseConfig);
+
+    const analytics = getAnalytics(app);
+
+    const auth = getAuth(app);
+
+
+    // CHECK LOGIN USER
+    onAuthStateChanged(auth, (user) => {
+
+      if (user) {
+
+        document.getElementById("name").innerHTML =
+          "Name : " + (user.displayName || "No Name");
+
+        document.getElementById("email").innerHTML =
+          "Email : " + user.email;
+
+        if (user.photoURL) {
+
+          document.getElementById("photo").src = user.photoURL;
+
+        }
+
+      } else {
+
+        window.location.href = "index.html";
+
+      }
+
+    });
+
+
+    // LOGOUT
+    document.getElementById("logout").addEventListener("click", () => {
+
+      signOut(auth)
+
+        .then(() => {
+
+          alert("Logout Successful");
+
+          window.location.href = "index.html";
+
+        });
+
+    });
+
+  </script>
+
+</body>
+</html>
