@@ -1,4 +1,10 @@
 [
+      {
+        "username": "Rahul123",
+        "first_name": "Rahul",
+        "last_name": "Sharma",
+        "gender": "Male"
+    },
     {
         "username": "arshad123",
         "first_name": "Arshad",
