@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Registration</title>
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body{
+      background:#f4f7fb;
+      display:flex;
+      justify-content:center;
+      align-items:flex-start;
+      min-height:100vh;
+      padding:40px;
+    }
+
+    .container{
+      display:flex;
+      gap:30px;
+      width:100%;
+      max-width:1200px;
+    }
+
+    .form-box,
+    .data-box{
+      background:white;
+      padding:25px;
+      border-radius:15px;
+      box-shadow:0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .form-box{
+      width:40%;
+    }
+
+    .data-box{
+      width:60%;
+    }
+
+    h2{
+      margin-bottom:20px;
+      color:#333;
+    }
+
+    .input-group{
+      margin-bottom:15px;
+    }
+
+    label{
+      display:block;
+      margin-bottom:6px;
+      font-weight:bold;
+      color:#444;
+    }
+
+    input{
+      width:100%;
+      padding:12px;
+      border:1px solid #ccc;
+      border-radius:8px;
+      font-size:15px;
+    }
+
+    button{
+      width:100%;
+      padding:12px;
+      background:#2563eb;
+      color:white;
+      border:none;
+      border-radius:8px;
+      font-size:16px;
+      cursor:pointer;
+      margin-top:10px;
+    }
+
+    button:hover{
+      background:#1d4ed8;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      margin-top:15px;
+    }
+
+    table th,
+    table td{
+      border:1px solid #ddd;
+      padding:12px;
+      text-align:center;
+    }
+
+    table th{
+      background:#2563eb;
+      color:white;
+    }
+
+    .success{
+      color:green;
+      margin-top:10px;
+      font-weight:bold;
+    }
+
+    @media(max-width:900px){
+      .container{
+        flex-direction:column;
+      }
+
+      .form-box,
+      .data-box{
+        width:100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <!-- Registration Form -->
+    <div class="form-box">
+      <h2>Student Registration</h2>
+
+      <div class="input-group">
+        <label>Student Name</label>
+        <input type="text" id="name" placeholder="Enter student name">
+      </div>
+
+      <div class="input-group">
+        <label>Student Age</label>
+        <input type="number" id="age" placeholder="Enter age">
+      </div>
+
+      <div class="input-group">
+        <label>Student Class</label>
+        <input type="text" id="studentClass" placeholder="Enter class">
+      </div>
+
+      <div class="input-group">
+        <label>Phone Number</label>
+        <input type="text" id="phone" placeholder="Enter phone number">
+      </div>
+
+      <button onclick="registerStudent()">Register Student</button>
+
+      <p class="success" id="successMsg"></p>
+    </div>
+
+    <!-- View Data -->
+    <div class="data-box">
+      <h2>Registered Students</h2>
+
+      <button onclick="loadStudents()">
+        Show All Data
+      </button>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Class</th>
+            <th>Phone</th>
+          </tr>
+        </thead>
+
+        <tbody id="studentTable">
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <script type="module">
+
+    // Firebase Imports
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      getDocs
+    } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+
+    // Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyAlIuzhG1K0zEqF8c7dWvY9yr-214yEpm8",
+      authDomain: "class-2and3.firebaseapp.com",
+      projectId: "class-2and3",
+      storageBucket: "class-2and3.firebasestorage.app",
+      messagingSenderId: "956789513098",
+      appId: "1:956789513098:web:e4948646a14f3def9f0673",
+      measurementId: "G-98GPMFW3B2"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+
+    // Initialize Firestore
+    const db = getFirestore(app);
+
+    // Register Student
+    window.registerStudent = async function () {
+
+      const name = document.getElementById("name").value;
+      const age = document.getElementById("age").value;
+      const studentClass = document.getElementById("studentClass").value;
+      const phone = document.getElementById("phone").value;
+
+      if(!name || !age || !studentClass || !phone){
+        alert("Please fill all fields");
+        return;
+      }
+
+      try {
+
+        await addDoc(collection(db, "students"), {
+          name: name,
+          age: age,
+          class: studentClass,
+          phone: phone
+        });
+
+        document.getElementById("successMsg").innerText =
+          "Student Registered Successfully!";
+
+        // Clear form
+        document.getElementById("name").value = "";
+        document.getElementById("age").value = "";
+        document.getElementById("studentClass").value = "";
+        document.getElementById("phone").value = "";
+
+        loadStudents();
+
+      } catch (error) {
+        console.error("Error adding document: ", error);
+      }
+    };
+
+    // Load Students Data
+    window.loadStudents = async function () {
+
+      const table = document.getElementById("studentTable");
+
+      table.innerHTML = "";
+
+      const querySnapshot = await getDocs(collection(db, "students"));
+
+      querySnapshot.forEach((doc) => {
+
+        const data = doc.data();
+
+        table.innerHTML += `
+          <tr>
+            <td>${data.name}</td>
+            <td>${data.age}</td>
+            <td>${data.class}</td>
+            <td>${data.phone}</td>
+          </tr>
+        `;
+      });
+    };
+
+    // Auto load data on page load
+    loadStudents();
+
+  </script>
+
+</body>
+</html>
