@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern User Directory - Connect Node.js & MongoDB</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Theme & Background Overlay -->
+    <div class="bg-vibe"></div>
+    <div class="overlay"></div>
+
+    <!-- Main Application Container -->
+    <main id="app-container">
+        
+        <!-- Left Section: Premium Glassmorphic Form Card -->
+        <section class="form-panel">
+            <header class="app-header">
+                <div class="logo-area">
+                    <i class="fa-solid fa-database database-icon"></i>
+                    <h1>MongoDB Connect</h1>
+                </div>
+                <p class="subtitle">Class 4 Backend Connectivity Hub</p>
+            </header>
+
+            <form id="registration-form" novalidate>
+                <div class="form-grid">
+                    
+                    <!-- Username Input -->
+                    <div class="input-group">
+                        <label for="username">
+                            <i class="fa-regular fa-user"></i> Full Name
+                        </label>
+                        <div class="input-wrapper">
+                            <input type="text" id="username" name="username" placeholder="e.g. John Doe" required>
+                            <span class="focus-border"></span>
+                        </div>
+                    </div>
+
+                    <!-- User ID Input -->
+                    <div class="input-group">
+                        <label for="userId">
+                            <i class="fa-regular fa-id-card"></i> User ID
+                        </label>
+                        <div class="input-wrapper">
+                            <input type="text" id="userId" name="userId" placeholder="e.g. john_doe99" required>
+                            <span class="focus-border"></span>
+                        </div>
+                    </div>
+
+                    <!-- Mobile Number Input -->
+                    <div class="input-group">
+                        <label for="mobileNumber">
+                            <i class="fa-solid fa-mobile-screen-button"></i> Mobile Number
+                        </label>
+                        <div class="input-wrapper">
+                            <input type="tel" id="mobileNumber" name="mobileNumber" placeholder="e.g. +1 234 567 8900" required>
+                            <span class="focus-border"></span>
+                        </div>
+                    </div>
+
+                    <!-- Mail ID Input -->
+                    <div class="input-group">
+                        <label for="mailId">
+                            <i class="fa-regular fa-envelope"></i> Email Address
+                        </label>
+                        <div class="input-wrapper">
+                            <input type="email" id="mailId" name="mailId" placeholder="e.g. john@domain.com" required>
+                            <span class="focus-border"></span>
+                        </div>
+                    </div>
+
+                    <!-- Image Upload Input -->
+                    <div class="input-group full-width">
+                        <label>
+                            <i class="fa-regular fa-image"></i> Profile Picture
+                        </label>
+                        <div class="upload-zone" id="upload-zone">
+                            <input type="file" id="image" name="image" accept="image/*" required>
+                            <div class="upload-placeholder" id="upload-placeholder">
+                                <i class="fa-solid fa-cloud-arrow-up cloud-icon"></i>
+                                <p class="upload-title">Drag & drop or <span>browse</span></p>
+                                <p class="upload-hint">Supports JPEG, PNG, WEBP (Max 5MB)</p>
+                            </div>
+                            <div class="preview-container hidden" id="preview-container">
+                                <img src="" alt="Preview" class="image-preview" id="image-preview">
+                                <button type="button" class="remove-preview-btn" id="remove-preview-btn">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="submit-btn" id="submit-btn">
+                    <span>Submit & Store Data</span>
+                    <i class="fa-solid fa-arrow-right btn-arrow"></i>
+                </button>
+            </form>
+        </section>
+
+        <!-- Right Section: Dashboard View / Directory Output -->
+        <section class="display-panel">
+            <div class="display-header">
+                <h2>Database Explorer</h2>
+                <!-- Show Data Toggle Button -->
+                <button type="button" class="show-data-btn" id="show-data-btn">
+                    <i class="fa-solid fa-eye eye-icon"></i>
+                    <span>Show Data</span>
+                </button>
+            </div>
+
+            <!-- Stored Users Display Area -->
+            <div class="display-body empty-state" id="display-body">
+                <div class="empty-state-content" id="empty-state-content">
+                    <div class="pulse-circle">
+                        <i class="fa-solid fa-server server-pulse"></i>
+                    </div>
+                    <h3>Ready to Retrieve Records</h3>
+                    <p>Click "Show Data" to pull live user registrations directly from MongoDB Atlas cluster in real-time.</p>
+                </div>
+
+                <!-- Cards Grid -->
+                <div class="users-grid hidden" id="users-grid"></div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Edit User Modal -->
+    <div class="modal-overlay hidden" id="edit-modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-pen-to-square"></i> Edit User</h3>
+                <button type="button" class="modal-close-btn" id="modal-close-btn">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form id="edit-form" novalidate>
+                <input type="hidden" id="edit-id">
+                <div class="modal-body">
+                    <div class="input-group">
+                        <label for="edit-username"><i class="fa-regular fa-user"></i> Full Name</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="edit-username" name="username" required>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="edit-userId"><i class="fa-regular fa-id-card"></i> User ID</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="edit-userId" name="userId" required>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="edit-mobileNumber"><i class="fa-solid fa-mobile-screen-button"></i> Mobile Number</label>
+                        <div class="input-wrapper">
+                            <input type="tel" id="edit-mobileNumber" name="mobileNumber" required>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="edit-mailId"><i class="fa-regular fa-envelope"></i> Email Address</label>
+                        <div class="input-wrapper">
+                            <input type="email" id="edit-mailId" name="mailId" required>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label><i class="fa-regular fa-image"></i> Change Image (optional)</label>
+                        <div class="edit-image-row">
+                            <img src="" alt="Current" class="edit-current-avatar" id="edit-current-avatar">
+                            <div class="edit-upload-wrapper">
+                                <input type="file" id="edit-image" name="image" accept="image/*">
+                                <label for="edit-image" class="edit-upload-label">
+                                    <i class="fa-solid fa-cloud-arrow-up"></i> Choose New Image
+                                </label>
+                                <span class="edit-file-name" id="edit-file-name">No file selected</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="modal-cancel-btn" id="modal-cancel-btn">Cancel</button>
+                    <button type="submit" class="modal-save-btn" id="modal-save-btn">
+                        <i class="fa-solid fa-floppy-disk"></i> Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal-overlay hidden" id="delete-modal-overlay">
+        <div class="modal-card delete-modal-card">
+            <div class="delete-modal-icon">
+                <i class="fa-solid fa-trash-can"></i>
+            </div>
+            <h3>Delete User?</h3>
+            <p class="delete-modal-text">This action is <strong>irreversible</strong>. The user record and image will be permanently removed from MongoDB.</p>
+            <p class="delete-user-name" id="delete-user-name"></p>
+            <input type="hidden" id="delete-id">
+            <div class="modal-footer">
+                <button type="button" class="modal-cancel-btn" id="delete-cancel-btn">Cancel</button>
+                <button type="button" class="modal-delete-btn" id="delete-confirm-btn">
+                    <i class="fa-solid fa-trash"></i> Yes, Delete
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interactive Notification System -->
+    <div class="notification-container" id="notification-container"></div>
+
+    <!-- Application Script -->
+    <script src="app.js"></script>
+</body>
+</html>
